@@ -10,10 +10,17 @@ import java.io.Serializable;
  * @author Oleksiy Dyagilev
  */
 @SpaceClass(fifoSupport = FifoSupport.OPERATION)
-public class Person implements Serializable {
+public class Sentence implements Serializable {
 
     private String id;
-    private String name;
+    private String text;
+
+    public Sentence() {
+    }
+
+    public Sentence(String text) {
+        this.text = text;
+    }
 
     @SpaceId(autoGenerate = true)
     public String getId() {
@@ -24,15 +31,12 @@ public class Person implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getText() {
+        return text;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public void test() {
-        System.out.println("test");
-    }
 }

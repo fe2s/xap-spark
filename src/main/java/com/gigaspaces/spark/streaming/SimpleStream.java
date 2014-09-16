@@ -1,9 +1,5 @@
 package com.gigaspaces.spark.streaming;
 
-/**
- * @author Oleksiy Dyagilev
- */
-
 import com.gigaspaces.client.TakeModifiers;
 import org.openspaces.core.GigaSpace;
 
