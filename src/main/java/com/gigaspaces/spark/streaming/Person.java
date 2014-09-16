@@ -1,13 +1,16 @@
 package com.gigaspaces.spark.streaming;
 
+import com.gigaspaces.annotation.pojo.FifoSupport;
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
+
+import java.io.Serializable;
 
 /**
  * @author Oleksiy Dyagilev
  */
-@SpaceClass
-public class Person {
+@SpaceClass(fifoSupport = FifoSupport.OPERATION)
+public class Person implements Serializable {
 
     private String id;
     private String name;
@@ -29,7 +32,7 @@ public class Person {
         this.name = name;
     }
 
-    public void test(){
+    public void test() {
         System.out.println("test");
     }
 }

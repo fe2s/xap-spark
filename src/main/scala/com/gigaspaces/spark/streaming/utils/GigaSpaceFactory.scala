@@ -12,7 +12,7 @@ object GigaSpaceFactory {
 
   private val gigaSpaces = mutable.Map[String, GigaSpace]()
 
-  def getInstance(spaceUrl: String): GigaSpace = {
+  def getOrCreate(spaceUrl: String): GigaSpace = {
     def createInstance = {
       val urlSpaceConfigurer = new UrlSpaceConfigurer(spaceUrl)
       new GigaSpaceConfigurer(urlSpaceConfigurer.space()).gigaSpace()
