@@ -28,7 +28,7 @@ object XAPWordCounter extends App {
   }
 
   def runSpark() {
-    val sparkConf = new SparkConf().setAppName("NetworkWordCount").setMaster("local[*]")
+    val sparkConf = new SparkConf().setAppName("XAPWordCount").setMaster("local[*]")
     val context = new StreamingContext(sparkConf, Seconds(1))
 
     val stream = XAPUtils.createStream[Sentence](context, StorageLevel.MEMORY_AND_DISK_SER, "jini://*/*/space", new Sentence)
