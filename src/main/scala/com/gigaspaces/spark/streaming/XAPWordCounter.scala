@@ -8,6 +8,8 @@ import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.openspaces.core.space.UrlSpaceConfigurer
 import org.openspaces.core.{GigaSpaceConfigurer, GigaSpace}
+import org.apache.log4j.{Level, Logger}
+
 
 import scala.util.Random
 
@@ -19,6 +21,8 @@ object XAPWordCounter extends App {
   start()
 
   def start() {
+    LogHelper.setLogLevel(Level.WARN)
+
     runSentenceProducer()
     runSpark()
   }
