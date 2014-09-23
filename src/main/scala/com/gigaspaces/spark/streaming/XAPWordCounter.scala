@@ -1,5 +1,6 @@
 package com.gigaspaces.spark.streaming
 
+import com.gigaspaces.spark.streaming.XAPUtils._
 import com.gigaspaces.spark.streaming.utils.GigaSpaceFactory
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
@@ -10,6 +11,8 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.openspaces.core.space.UrlSpaceConfigurer
 import org.openspaces.core.{GigaSpaceConfigurer, GigaSpace}
 import org.apache.log4j.{Level, Logger}
+
+import XAPImplicits._
 
 
 import scala.util.Random
@@ -33,15 +36,18 @@ object XAPWordCounter extends App {
   }
 
   def runSpark() {
-    val sparkConf = new SparkConf().setAppName("XAPWordCount").setMaster("local[*]")
+    val sparkConf = new SparkConf()
+      .setAppName("XAPWordCount")
+      .setMaster("local[*]")
+      .set(SPACE_URL_CONF_KEY, "jini://*/*/space")
+
     val context = new StreamingContext(sparkConf, Seconds(1))
     context.checkpoint(".")
 
     // create XAP stream
-    val spaceUrl = "jini://*/*/space"
-    val stream = XAPUtils.createStream[Sentence](context, StorageLevel.MEMORY_AND_DISK_SER, spaceUrl, new Sentence)
+    val stream = XAPUtils.createStream[Sentence](context, StorageLevel.MEMORY_AND_DISK_SER, new Sentence)
     val words = stream.flatMap(_.getText.split(" "))
-    val wordDstream = words.map(x => (x, 1))
+    val wordDStream = words.map(x => (x, 1))
 
     // Update the cumulative count using updateStateByKey
     // This will give a DStream made of state (which is the cumulative count of the words)
@@ -50,20 +56,33 @@ object XAPWordCounter extends App {
       val previousCount = state.getOrElse(0)
       Some(currentCount + previousCount)
     }
-    val stateDStream = wordDstream.updateStateByKey[Int](updateFunc)
+    val wordCountStream = wordDStream.updateStateByKey[Int](updateFunc)
 
     // output counts to XAP
-    stateDStream.foreachRDD((rdd: RDD[(String, Int)]) => {
+    wordCountStream.foreachRDD((rdd: RDD[(String, Int)]) => {
       rdd.foreachPartition(partitionRecords => {
+        val spaceUrl = "jini://*/*/space"
         val gigaSpace = GigaSpaceFactory.getOrCreate(spaceUrl)
         val wordCounts = partitionRecords.map {
           case (word, count) => new WordCount(word, count)
         }
-        gigaSpace.writeMultiple(wordCounts.toArray)
+        if (wordCounts.nonEmpty) {
+          gigaSpace.writeMultiple(wordCounts.toArray)
+        }
       })
     })
 
-    stateDStream.print()
+    //        wordCountStream.foreachRDDPartitionWithXAP((gigaSpace, partitionRecords: Iterator[(String, Int)]) => {
+    //          val wordCounts = partitionRecords.map {
+    //            case (word, count) => new WordCount(word, count)
+    //          }
+    //          if (wordCounts.nonEmpty) {
+    //            gigaSpace.writeMultiple(wordCounts.toArray)
+    //          }
+    //        })
+
+
+    wordCountStream.print()
     context.start()
     context.awaitTermination()
   }

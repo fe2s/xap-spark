@@ -6,6 +6,8 @@ import scala.collection.mutable
 
 
 /**
+ * Ensures single GigaSpace instance per JVM (Spark worker)
+ *
  * @author Oleksiy Dyagilev
  */
 object GigaSpaceFactory {
