@@ -2,6 +2,7 @@ package com.gigaspaces.spark.streaming
 
 import com.gigaspaces.spark.streaming.utils.GigaSpaceFactory
 import org.apache.spark.SparkConf
+import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.StreamingContext._
 import org.apache.spark.streaming.dstream.DStream
@@ -34,11 +35,35 @@ object XAPWordCounter extends App {
   def runSpark() {
     val sparkConf = new SparkConf().setAppName("XAPWordCount").setMaster("local[*]")
     val context = new StreamingContext(sparkConf, Seconds(1))
+    context.checkpoint(".")
 
-    val stream = XAPUtils.createStream[Sentence](context, StorageLevel.MEMORY_AND_DISK_SER, "jini://*/*/space", new Sentence)
+    // create XAP stream
+    val spaceUrl = "jini://*/*/space"
+    val stream = XAPUtils.createStream[Sentence](context, StorageLevel.MEMORY_AND_DISK_SER, spaceUrl, new Sentence)
     val words = stream.flatMap(_.getText.split(" "))
-    val wordCounts = words.map(x => (x, 1)).reduceByKey(_ + _)
-    wordCounts.print()
+    val wordDstream = words.map(x => (x, 1))
+
+    // Update the cumulative count using updateStateByKey
+    // This will give a DStream made of state (which is the cumulative count of the words)
+    val updateFunc = (values: Seq[Int], state: Option[Int]) => {
+      val currentCount = values.foldLeft(0)(_ + _)
+      val previousCount = state.getOrElse(0)
+      Some(currentCount + previousCount)
+    }
+    val stateDStream = wordDstream.updateStateByKey[Int](updateFunc)
+
+    // output counts to XAP
+    stateDStream.foreachRDD((rdd: RDD[(String, Int)]) => {
+      rdd.foreachPartition(partitionRecords => {
+        val gigaSpace = GigaSpaceFactory.getOrCreate(spaceUrl)
+        val wordCounts = partitionRecords.map {
+          case (word, count) => new WordCount(word, count)
+        }
+        gigaSpace.writeMultiple(wordCounts.toArray)
+      })
+    })
+
+    stateDStream.print()
     context.start()
     context.awaitTermination()
   }
