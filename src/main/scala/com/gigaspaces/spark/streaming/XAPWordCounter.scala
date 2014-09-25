@@ -25,7 +25,7 @@ object XAPWordCounter extends App {
   start()
 
   def start() {
-    LogHelper.setLogLevel(Level.WARN)
+    LogHelper.setLogLevel(Level.INFO)
 
     runSentenceProducer()
     runSpark()
@@ -36,21 +36,25 @@ object XAPWordCounter extends App {
   }
 
   def runSpark() {
+
     val sparkConf = new SparkConf()
       .setAppName("XAPWordCount")
-      .setMaster("local[*]")
+      //      .setMaster("local[*]")
+      .setMaster("spark://fe2s:7077")
       .set(SPACE_URL_CONF_KEY, "jini://*/*/space")
 
     val context = new StreamingContext(sparkConf, Seconds(1))
     context.checkpoint(".")
 
     // create XAP stream
-    val stream = XAPUtils.createStream[Sentence](context, StorageLevel.MEMORY_AND_DISK_SER, new Sentence)
+    val numStreams = 2
+    val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context, new Sentence))
+    val stream = context.union(streams)
     val words = stream.flatMap(_.getText.split(" "))
     val wordDStream = words.map(x => (x, 1))
 
-    // Update the cumulative count using updateStateByKey
-    // This will give a DStream made of state (which is the cumulative count of the words)
+    // update the cumulative count using updateStateByKey
+    // this will give a DStream made of state (which is the cumulative count of the words)
     val updateFunc = (values: Seq[Int], state: Option[Int]) => {
       val currentCount = values.foldLeft(0)(_ + _)
       val previousCount = state.getOrElse(0)

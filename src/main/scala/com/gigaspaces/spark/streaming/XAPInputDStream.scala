@@ -28,6 +28,8 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
                                              template: T) extends Receiver[T](storageLevel) with Logging {
 
   override def onStart() = {
+    logInfo("Starting XAP Receiver")
+    println("Starting XAP Receiver")
     // TODO: make configurable
     val threadsNumber = 1
     val threadPool = Executors.newFixedThreadPool(threadsNumber)
@@ -47,6 +49,8 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
 
         // TODO: make config.
         val items = stream.readBatch(2)
+        logInfo("read items " + items)
+        println("read items " + items)
         store(items.iterator)
       } catch {
         case e: Throwable => logError("Error reading from XAP stream", e)

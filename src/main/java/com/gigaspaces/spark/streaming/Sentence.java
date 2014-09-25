@@ -39,4 +39,11 @@ public class Sentence implements Serializable {
         this.text = text;
     }
 
+    @Override
+    public String toString() {
+        return "Sentence{" +
+                "id='" + id + '\'' +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }

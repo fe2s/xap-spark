@@ -3,6 +3,7 @@ package com.gigaspaces.spark.streaming
 import com.gigaspaces.spark.streaming.utils.GigaSpaceFactory
 import org.apache.spark.SparkContext
 import org.apache.spark.storage.StorageLevel
+import org.apache.spark.storage.StorageLevel._
 import org.apache.spark.streaming.StreamingContext
 import org.openspaces.core.GigaSpace
 
@@ -15,7 +16,7 @@ object XAPUtils {
 
   val SPACE_URL_CONF_KEY = "xap.space.url"
 
-  def createStream[T <: java.io.Serializable : ClassTag](ssc: StreamingContext, storageLevel: StorageLevel, template: T) = {
+  def createStream[T <: java.io.Serializable : ClassTag](ssc: StreamingContext, template: T, storageLevel: StorageLevel = MEMORY_AND_DISK_SER) = {
     val spaceUrl = getSpaceUrlFromContext(ssc)
     new XAPInputDStream[T](ssc, storageLevel, spaceUrl, template)
   }
