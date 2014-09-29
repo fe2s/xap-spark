@@ -1,11 +1,10 @@
-package com.gigaspaces.spark.streaming
+package com.gigaspaces.spark.streaming.utils
 
-import com.gigaspaces.spark.streaming.utils.GigaSpaceFactory
+import com.gigaspaces.spark.streaming.XAPInputDStream
 import org.apache.spark.SparkContext
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.storage.StorageLevel._
-import org.apache.spark.streaming.{Seconds, Duration, StreamingContext}
-import org.openspaces.core.GigaSpace
+import org.apache.spark.streaming.{Duration, Seconds, StreamingContext}
 
 import scala.reflect.ClassTag
 

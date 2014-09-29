@@ -1,17 +1,14 @@
-package com.gigaspaces.spark.streaming
+package com.gigaspaces.spark.streaming.wordcounter
 
-import com.gigaspaces.spark.streaming.XAPUtils._
-import com.gigaspaces.spark.streaming.utils.GigaSpaceFactory
+import com.gigaspaces.spark.streaming.utils.{XAPUtils, LogHelper, GigaSpaceFactory}
+import XAPUtils._
+import com.gigaspaces.spark.streaming.utils.{LogHelper, GigaSpaceFactory}
+import com.gigaspaces.spark.streaming.{Sentence, WordCount}
+import org.apache.log4j.Level
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
-import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.StreamingContext._
-import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import org.openspaces.core.space.UrlSpaceConfigurer
-import org.openspaces.core.{GigaSpaceConfigurer, GigaSpace}
-import org.apache.log4j.{Level, Logger}
-
 
 import scala.util.Random
 
