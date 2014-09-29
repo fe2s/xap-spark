@@ -12,8 +12,6 @@ import org.openspaces.core.space.UrlSpaceConfigurer
 import org.openspaces.core.{GigaSpaceConfigurer, GigaSpace}
 import org.apache.log4j.{Level, Logger}
 
-import XAPImplicits._
-
 
 import scala.util.Random
 
@@ -75,16 +73,6 @@ object XAPWordCounter extends App {
         }
       })
     })
-
-    //        wordCountStream.foreachRDDPartitionWithXAP((gigaSpace, partitionRecords: Iterator[(String, Int)]) => {
-    //          val wordCounts = partitionRecords.map {
-    //            case (word, count) => new WordCount(word, count)
-    //          }
-    //          if (wordCounts.nonEmpty) {
-    //            gigaSpace.writeMultiple(wordCounts.toArray)
-    //          }
-    //        })
-
 
     wordCountStream.print()
     context.start()
