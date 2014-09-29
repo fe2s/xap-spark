@@ -25,7 +25,7 @@ object XAPWordCounter extends App {
   start()
 
   def start() {
-    LogHelper.setLogLevel(Level.INFO)
+    LogHelper.setLogLevel(Level.WARN)
 
     runSentenceProducer()
     runSpark()
@@ -39,16 +39,16 @@ object XAPWordCounter extends App {
 
     val sparkConf = new SparkConf()
       .setAppName("XAPWordCount")
-      //      .setMaster("local[*]")
-      .setMaster("spark://fe2s:7077")
+            .setMaster("local[*]")
+//      .setMaster("spark://fe2s:7077")
       .set(SPACE_URL_CONF_KEY, "jini://*/*/space")
 
     val context = new StreamingContext(sparkConf, Seconds(1))
     context.checkpoint(".")
 
     // create XAP stream
-    val numStreams = 2
-    val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context, new Sentence))
+    val numStreams = 1
+    val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context, new Sentence, 50, Seconds(3), 4))
     val stream = context.union(streams)
     val words = stream.flatMap(_.getText.split(" "))
     val wordDStream = words.map(x => (x, 1))

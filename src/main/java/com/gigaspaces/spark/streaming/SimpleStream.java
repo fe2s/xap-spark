@@ -4,6 +4,9 @@ import com.gigaspaces.client.TakeModifiers;
 import org.openspaces.core.GigaSpace;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,7 +23,7 @@ public class SimpleStream<T extends Serializable> {
     /**
      * Creates a reference to stream
      *
-     * @param space space
+     * @param space    space
      * @param template used to match objects during reading. If you want to have several streams with the same type,
      *                 template objects should differentiate your streams.
      */
@@ -31,14 +34,16 @@ public class SimpleStream<T extends Serializable> {
 
     /**
      * write single element to stream
+     *
      * @param value element
      */
-    public void write(T value){
+    public void write(T value) {
         space.write(value);
     }
 
     /**
      * write batch of elements to stream
+     *
      * @param values list of elements
      */
     public void writeBatch(List<T> values) {
@@ -47,6 +52,7 @@ public class SimpleStream<T extends Serializable> {
 
     /**
      * read and remove single element from stream
+     *
      * @return read element
      */
     public T read() {
@@ -59,8 +65,29 @@ public class SimpleStream<T extends Serializable> {
      * @param maxNumber max number of elements
      * @return read elements
      */
-    public T[] readBatch(int maxNumber){
+    public T[] readBatch(int maxNumber) {
         return space.takeMultiple(template, maxNumber, TakeModifiers.FIFO);
     }
+
+    /**
+     * read and remove batch of elements from stream,
+     * if there is nothing to be read, waits for data
+     *
+     * @param maxNumber max number of elements
+     * @param waitTimeout timeout in ms to wait for elements in the stream
+     * @return read elements
+     */
+    public List<T> readBatchBlocking(int maxNumber, long waitTimeout) {
+        // first try non blocking batch take
+        T[] items = space.takeMultiple(template, maxNumber, TakeModifiers.FIFO);
+        if (items != null && items.length > 0) {
+            return Arrays.asList(items);
+        }
+
+        // nothing found, blocking take
+        T item = space.take(template, waitTimeout, TakeModifiers.FIFO);
+        return item == null ? Collections.<T>emptyList() : Collections.singletonList(item);
+    }
+
 
 }
