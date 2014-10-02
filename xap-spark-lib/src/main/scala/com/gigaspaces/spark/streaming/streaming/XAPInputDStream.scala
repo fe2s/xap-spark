@@ -20,10 +20,10 @@ class XAPInputDStream[T <: java.io.Serializable : ClassTag](@transient ssc: Stre
                                                             spaceUrl: String,
                                                             template: T,
                                                             batchSize: Int,
-                                                            waitTimeout: Duration,
+                                                            readRetryInterval: Duration,
                                                             parallelReaders: Int) extends ReceiverInputDStream[T](ssc) {
 
-  override def getReceiver(): Receiver[T] = new XAPReceiver[T](storageLevel, spaceUrl, template, batchSize, waitTimeout, parallelReaders)
+  override def getReceiver(): Receiver[T] = new XAPReceiver[T](storageLevel, spaceUrl, template, batchSize, readRetryInterval, parallelReaders)
 
 }
 
@@ -31,14 +31,14 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
                                              spaceUrl: String,
                                              template: T,
                                              batchSize: Int,
-                                             waitTimeout: Duration,
+                                             readRetryInterval: Duration,
                                              parallelReaders: Int) extends Receiver[T](storageLevel) with Logging {
 
   override def onStart() = {
     logInfo("Starting XAP Receiver")
     println("Starting XAP Receiver")
     val threadPool = Executors.newFixedThreadPool(parallelReaders)
-    (1 to parallelReaders).foreach(_ => threadPool.submit(new StreamReader(batchSize, waitTimeout)))
+    (1 to parallelReaders).foreach(_ => threadPool.submit(new StreamReader(batchSize, readRetryInterval)))
     threadPool.shutdown()
   }
 
@@ -46,7 +46,7 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
     // nothing to do
   }
 
-  class StreamReader(batchSize: Int, waitTimeout: Duration) extends Runnable {
+  class StreamReader(batchSize: Int, readRetryInterval: Duration) extends Runnable {
     override def run() = {
       try {
         val gigaSpace = GigaSpaceFactory.getOrCreate(spaceUrl)
@@ -54,8 +54,8 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
 
         println("before read")
 
-        val items = stream.readBatchBlocking(batchSize, waitTimeout.milliseconds)
-        println("read items " + items.size())
+        val items = stream.readBatch(batchSize, readRetryInterval.milliseconds)
+        println("read items " + items.length)
         store(items.iterator)
       } catch {
         case e: Throwable => logError("Error reading from XAP stream", e)

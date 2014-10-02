@@ -6,7 +6,7 @@ import org.apache.log4j.Level
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.StreamingContext._
-import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.spark.streaming.{Milliseconds, Seconds, StreamingContext}
 
 import scala.util.Random
 
@@ -41,7 +41,7 @@ object XAPWordCounter extends App {
 
     // create XAP stream
     val numStreams = 1
-    val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context, new Sentence, 50, Seconds(3), 4))
+    val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context, new Sentence, 50, Milliseconds(100), 4))
     val stream = context.union(streams)
     val words = stream.flatMap(_.getText.split(" "))
     val wordDStream = words.map(x => (x, 1))

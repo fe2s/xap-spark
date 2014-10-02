@@ -14,6 +14,7 @@ object GigaSpaceFactory {
 
   private val gigaSpaces = mutable.Map[String, GigaSpace]()
 
+  // TODO: add group, locator
   def getOrCreate(spaceUrl: String): GigaSpace = {
     def createInstance = {
       val urlSpaceConfigurer = new UrlSpaceConfigurer(spaceUrl)

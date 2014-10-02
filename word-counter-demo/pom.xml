@@ -18,6 +18,7 @@
     <modules>
         <module>spark</module>
         <module>space-model</module>
+        <module>space</module>
     </modules>
 
     <repositories>
