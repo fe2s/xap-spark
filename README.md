@@ -1,4 +1,4 @@
 xap-spark
 =========
 
-GigaSpaces XAP and Spark integration
+GigaSpaces XAP and Spark Streaming integration
