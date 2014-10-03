@@ -1,6 +1,6 @@
 package com.gigaspaces.spark.streaming.streaming
 
-import java.util.concurrent.{ExecutorService, Executors}
+import java.util.concurrent.{Executors}
 
 import com.gigaspaces.spark.streaming.streaming.utils.GigaSpaceFactory
 import com.gigaspaces.streaming.XAPStream
@@ -48,20 +48,20 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
 
   class StreamReader(batchSize: Int, readRetryInterval: Duration) extends Runnable {
     override def run() = {
-      try {
-        val gigaSpace = GigaSpaceFactory.getOrCreate(spaceUrl)
-        val stream = new XAPStream[T](gigaSpace, template)
+      while (!isStopped()) {
+        try {
+          val gigaSpace = GigaSpaceFactory.getOrCreate(spaceUrl)
+          val stream = new XAPStream[T](gigaSpace, template)
 
-        println("before read")
+          println("before read")
 
-        val items = stream.readBatch(batchSize, readRetryInterval.milliseconds)
-        println("read items " + items.length)
-        store(items.iterator)
-      } catch {
-        case e: Throwable => logError("Error reading from XAP stream", e)
+          val items = stream.readBatch(batchSize, readRetryInterval.milliseconds)
+          println("read items " + items.length)
+          store(items.iterator)
+        } catch {
+          case e: Throwable => logError("Error reading from XAP stream", e)
+        }
       }
-
-      run()
     }
   }
 
