@@ -27,7 +27,7 @@ object XAPWordCounter extends App {
       .set(SPACE_URL_CONF_KEY, "jini://*/*/space")
 
     val context = new StreamingContext(sparkConf, Seconds(1))
-    context.checkpoint(".")
+    context.checkpoint("./checkpoint")
 
     // create XAP stream
     val numStreams = 1
