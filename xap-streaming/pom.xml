@@ -31,12 +31,6 @@
 
     <description>XAP Streaming</description>
 
-    <properties>
-        <jdk.version>1.7</jdk.version>
-        <gs.version>10.0.0-11510-RC</gs.version>
-        <spring.dao.version>2.0.8</spring.dao.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
