@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Word Count</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/wordcloud.js"></script>
+
+    <script type="text/javascript" src="js/wordCountTableChart.js"></script>
+    <script type="text/javascript" src="js/wordCountCloudChart.js"></script>
+    <script type="text/javascript" src="js/chartDraw.js"></script>
+</head>
+<body>
+
+
+<div id="wrapper">
+    <div class="w1">
+        <div id="header">
+            <div class="holder">
+                <strong class="logo"><a href="#">Word Count</a></strong>
+            </div>
+        </div>
+        <div id="main">
+            <div class="chart-row">
+                <div class="tables-holder">
+                    <div class="table">
+                        <div class="table-title-wrapper">
+                            <span class="table-title">Some title</span><span
+                                class="table-title-comment">some legend</span>
+                        </div>
+                        <div class="table-content" id='wordcount_table_div'></div>
+                    </div>
+                </div>
+                <div class="holder">
+                    <div class="chart">
+                        <div id="wordcount_cloud_div" style="width: 900px; height: 500px;"></div>
+                        <span class="legend">Some legend</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
