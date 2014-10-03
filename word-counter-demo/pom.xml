@@ -19,6 +19,7 @@
         <module>spark</module>
         <module>space-model</module>
         <module>space</module>
+        <module>feeder</module>
     </modules>
 
     <repositories>

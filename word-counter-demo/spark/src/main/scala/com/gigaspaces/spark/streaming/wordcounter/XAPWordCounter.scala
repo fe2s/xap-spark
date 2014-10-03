@@ -20,16 +20,6 @@ object XAPWordCounter extends App {
   def start() {
     LogHelper.setLogLevel(Level.WARN)
 
-    runSentenceProducer()
-    runSpark()
-  }
-
-  def runSentenceProducer() {
-    new Thread(new SentenceProducer).start()
-  }
-
-  def runSpark() {
-
     val sparkConf = new SparkConf()
       .setAppName("XAPWordCount")
             .setMaster("local[*]")
@@ -74,23 +64,4 @@ object XAPWordCounter extends App {
     context.awaitTermination()
   }
 
-}
-
-class SentenceProducer extends Runnable {
-
-  val random = new Random()
-  val gigaSpace = GigaSpaceFactory.getOrCreate("jini://*/*/space")
-  val sentences = Seq("the cow jumped over the moon",
-    "an apple a day keeps the doctor away",
-    "four score and seven years ago",
-    "snow white and the seven dwarfs",
-    "i am at two with nature")
-
-  override def run() {
-    val rndSentenceId = random.nextInt(sentences.length - 1)
-    val rndSentence = new Sentence(sentences(rndSentenceId))
-    gigaSpace.write(rndSentence)
-    Thread.sleep(500)
-    run()
-  }
 }
