@@ -3,11 +3,12 @@ package com.gigaspaces.spark.streaming.wordcounter;
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 
+import java.io.Serializable;
+
 /**
  * @author Oleksiy Dyagilev
  */
-@SpaceClass
-public class WordCount {
+public class WordCount implements Serializable {
     private String word;
     private Integer count;
 
@@ -19,7 +20,6 @@ public class WordCount {
         this.count = count;
     }
 
-    @SpaceId
     public String getWord() {
         return word;
     }
@@ -34,5 +34,13 @@ public class WordCount {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    @Override
+    public String toString() {
+        return "WordCount{" +
+                "word='" + word + '\'' +
+                ", count=" + count +
+                '}';
     }
 }

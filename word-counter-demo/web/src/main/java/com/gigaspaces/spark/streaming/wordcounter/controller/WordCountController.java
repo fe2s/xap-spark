@@ -20,7 +20,7 @@ public class WordCountController {
 
     @RequestMapping(value = "/wordCountChartData", method = RequestMethod.GET)
     @ResponseBody
-    public List<WordCount> getOverallChartDataReport() {
+    public WordCount[] getOverallChartDataReport() {
         return service.getWordCountReport();
     }
 

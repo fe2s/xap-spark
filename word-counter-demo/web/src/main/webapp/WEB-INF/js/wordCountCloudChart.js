@@ -12,9 +12,9 @@ function initWordCountCloud() {
 }
 
 function drawWordCountCloud(data) {
-    if(wordCountCloudHasFocus){
-        return;
-    }
+//    if(wordCountCloudHasFocus){
+//        return;
+//    }
 
     var coef = findCoef(data)
 

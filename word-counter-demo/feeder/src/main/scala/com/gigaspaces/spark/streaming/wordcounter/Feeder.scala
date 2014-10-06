@@ -6,6 +6,7 @@ import org.openspaces.core.{GigaSpace, GigaSpaceConfigurer}
 import org.openspaces.core.space.UrlSpaceConfigurer
 import scopt.OptionParser
 
+import scala.annotation.tailrec
 import scala.io.Source
 
 /**
@@ -58,18 +59,22 @@ object Feeder extends App {
   }
 
   class SentenceProducer(gigaSpace: GigaSpace, sentenceNumPerSecond: Int) extends Runnable {
-    val file = "/mobydick.txt"
-    //    val file = "/test.txt"
-
-    val lines = Source.fromInputStream(getClass.getResourceAsStream(file)).getLines().toList
-    val stream = Stream.continually(lines).flatten
+        val file = "/mobydick.txt"
+//    val file = "/test.txt"
 
     override def run() {
-      while (true) {
+      val lines = Source.fromInputStream(getClass.getResourceAsStream(file)).getLines().toList
+      val stream = Stream.continually(lines).flatten
+      send(stream)
+
+      @tailrec
+      def send(stream: Stream[String]): Unit = {
         val startTime = System.currentTimeMillis()
-        val sentences = stream.take(sentenceNumPerSecond).map(new Sentence(_)).toArray
+        val (streamHead, streamTail) = stream.splitAt(sentenceNumPerSecond)
+        val sentences = streamHead.map(new Sentence(_)).toArray
 
         println(s"sending ${sentences.length} sentences")
+        sentences.foreach(println)
         gigaSpace.writeMultiple(sentences)
 
         val timeTaken = System.currentTimeMillis() - startTime
@@ -78,7 +83,10 @@ object Feeder extends App {
         } else {
           println(s"WARN: Sending $sentenceNumPerSecond took $timeTaken")
         }
+
+        send(streamTail)
       }
+
     }
   }
 

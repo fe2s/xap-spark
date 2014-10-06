@@ -1,11 +1,13 @@
 package com.gigaspaces.spark.streaming.wordcounter.service;
 
+import com.gigaspaces.spark.streaming.wordcounter.TopWordCounts;
 import com.gigaspaces.spark.streaming.wordcounter.WordCount;
 import org.openspaces.core.GigaSpace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,8 +19,9 @@ public class WordCountService {
     @Autowired
     private GigaSpace space;
 
+    public WordCount[] getWordCountReport() {
+        TopWordCounts topWordCounts = space.read(new TopWordCounts());
 
-    public List<WordCount> getWordCountReport() {
-        return Arrays.asList(space.readMultiple(new WordCount()));
+        return topWordCounts == null ? new WordCount[0] : topWordCounts.getWordCounts();
     }
 }
