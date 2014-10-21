@@ -1,6 +1,7 @@
 package com.gigaspaces.streaming;
 
 import com.gigaspaces.client.TakeModifiers;
+import com.gigaspaces.client.WriteModifiers;
 import org.openspaces.core.GigaSpace;
 
 import java.io.Serializable;
@@ -38,7 +39,7 @@ public class XAPStream<T extends Serializable> {
      * @param value element
      */
     public void write(T value) {
-        space.write(value);
+        space.write(value, WriteModifiers.ONE_WAY);
     }
 
     /**
@@ -47,7 +48,7 @@ public class XAPStream<T extends Serializable> {
      * @param values list of elements
      */
     public void writeBatch(List<T> values) {
-        space.writeMultiple(values.toArray());
+        space.writeMultiple(values.toArray(), WriteModifiers.ONE_WAY);
     }
 
     /**
