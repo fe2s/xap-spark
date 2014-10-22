@@ -36,7 +36,6 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
 
   override def onStart() = {
     logInfo("Starting XAP Receiver")
-    println("Starting XAP Receiver")
     val threadPool = Executors.newFixedThreadPool(parallelReaders)
     (1 to parallelReaders).foreach(_ => threadPool.submit(new StreamReader(batchSize, readRetryInterval)))
     threadPool.shutdown()
@@ -53,10 +52,8 @@ class XAPReceiver[T <: java.io.Serializable](storageLevel: StorageLevel,
           val gigaSpace = GigaSpaceFactory.getOrCreate(spaceUrl)
           val stream = new XAPStream[T](gigaSpace, template)
 
-          println("before read")
-
           val items = stream.readBatch(batchSize, readRetryInterval.milliseconds)
-          println("read items " + items.length)
+          logDebug("read items " + items.length)
           store(items.iterator)
         } catch {
           case e: Throwable => logError("Error reading from XAP stream", e)

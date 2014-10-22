@@ -7,27 +7,48 @@ import org.apache.spark.SparkConf
 import org.apache.spark.streaming.StreamingContext._
 import org.apache.spark.streaming.{Milliseconds, Seconds, StreamingContext}
 import org.apache.spark.SparkContext._
-import scala.collection.JavaConversions._
-
-import scala.util.Random
+import scopt.OptionParser
 
 /**
  * @author Oleksiy Dyagilev
  */
+case class Config(spaceUrl:String, sparkMaster:String, jarLocation: String)
+
 object XAPWordCounter extends App {
 
   val TOP_K = 10
 
   start()
 
-  def start() {
+  def start() = parseArgs map runSpark
+
+  def parseArgs(): Option[Config] = {
+    val parser = new OptionParser[Config]("com.gigaspaces.spark.streaming.wordcounter.XAPWordCounter") {
+      opt[String]('s', "space-url") action {
+        (x, c) => c.copy(spaceUrl = x)
+      }
+      opt[String]('m', "spark-master") action {
+        (x, c) => c.copy(sparkMaster = x)
+      }
+      opt[String]('j', "jar-location") required() action {
+        (x, c) => c.copy(jarLocation = x)
+      }
+    }
+
+    val defaultConfig = Config("jini://*/*/space", "local[*]", "")
+    parser.parse(args.toSeq, defaultConfig)
+  }
+
+  def runSpark(config:Config){
     LogHelper.setLogLevel(Level.WARN)
+
+    println(s"Starting Spark with $config")
 
     val sparkConf = new SparkConf()
       .setAppName("XAPWordCount")
-      .setMaster("local[*]")
-      //      .setMaster("spark://fe2s:7077")
-      .set(SPACE_URL_CONF_KEY, "jini://*/*/space")
+      .setMaster(config.sparkMaster)
+      .setJars(Seq(config.jarLocation))
+      .set(SPACE_URL_CONF_KEY, config.spaceUrl)
 
     val context = new StreamingContext(sparkConf, Seconds(1))
     context.checkpoint("./checkpoint")
@@ -44,11 +65,11 @@ object XAPWordCounter extends App {
       .reduceByKeyAndWindow(_ + _, Seconds(5))
       .map { case (word, count) => (count, word)}
       .transform(_.sortByKey(ascending = false))
-      .mapPartitions(_.take(TOP_K))
+//      .mapPartitions(_.take(TOP_K))
 
     // output to XAP
     wordCountWindow.foreachRDD(rdd => {
-      val gigaSpace = GigaSpaceFactory.getOrCreate("jini://*/*/space")
+      val gigaSpace = GigaSpaceFactory.getOrCreate(config.spaceUrl)
       val topList = rdd.take(TOP_K).map { case (count, word) => new WordCount(word, count)}
       topList.foreach(println)
       println("-----")
