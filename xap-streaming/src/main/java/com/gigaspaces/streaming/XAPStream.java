@@ -75,17 +75,16 @@ public class XAPStream<T extends Serializable> {
      * if there is nothing to be read, indefinitely waits for data be available by sleeping
      * configured interval of time and checking again
      *
-     * TODO: ideally we should use a blocking take() with timeout to wait for data be available,
-     * but this API is not supported against clustered Space. Consider creating multiple Space proxies,
-     * one per partition and call blocking take() against each of them.
-     *
-     * @param maxNumber max number of elements
+     * @param maxNumber         max number of elements
      * @param readRetryInterval interval to wait if there is no objects in the stream before the next read attempt
      * @return read elements
      */
     public T[] readBatch(int maxNumber, long readRetryInterval) {
         T[] items = space.takeMultiple(template, maxNumber, TakeModifiers.FIFO);
         while (items == null || items.length == 0) {
+            // ideally we should use a blocking take() with timeout to wait for data be available,
+            // but this API is not supported against clustered Space. Consider creating multiple Space proxies,
+            // one per partition and call blocking take() against each of them.
             try {
                 Thread.sleep(readRetryInterval);
                 items = space.takeMultiple(template, maxNumber, TakeModifiers.FIFO);
