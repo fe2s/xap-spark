@@ -2,9 +2,11 @@ package com.gigaspaces.spark.streaming.wordcounter
 
 import java.util.concurrent.Executors
 
+import com.gigaspaces.streaming.XAPStream
 import org.openspaces.core.{GigaSpace, GigaSpaceConfigurer}
 import org.openspaces.core.space.UrlSpaceConfigurer
 import scopt.OptionParser
+import collection.JavaConversions._
 
 import scala.annotation.tailrec
 import scala.io.Source
@@ -59,23 +61,23 @@ object Feeder extends App {
   }
 
   class SentenceProducer(gigaSpace: GigaSpace, sentenceNumPerSecond: Int) extends Runnable {
-        val file = "/mobydick.txt"
-//    val file = "/test.txt"
+    val file = "/mobydick.txt"
 
     override def run() {
       val lines = Source.fromInputStream(getClass.getResourceAsStream(file)).getLines().toList
-      val stream = Stream.continually(lines).flatten
-      send(stream)
+      val fileStream = Stream.continually(lines).flatten
+      val xapStream = new XAPStream[Sentence](gigaSpace, new Sentence())
+      send(fileStream)
 
       @tailrec
-      def send(stream: Stream[String]): Unit = {
+      def send(fileStream: Stream[String]): Unit = {
         val startTime = System.currentTimeMillis()
-        val (streamHead, streamTail) = stream.splitAt(sentenceNumPerSecond)
-        val sentences = streamHead.map(new Sentence(_)).toArray
+        val (streamHead, streamTail) = fileStream.splitAt(sentenceNumPerSecond)
+        val sentences = streamHead.map(new Sentence(_)).toList
 
         println(s"sending ${sentences.length} sentences")
         sentences.foreach(println)
-        gigaSpace.writeMultiple(sentences)
+        xapStream.writeBatch(sentences)
 
         val timeTaken = System.currentTimeMillis() - startTime
         if (timeTaken < 1000) {
