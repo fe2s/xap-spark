@@ -71,6 +71,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>feeder</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
