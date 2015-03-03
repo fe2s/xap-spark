@@ -13,6 +13,18 @@ import org.apache.spark.streaming.receiver.Receiver
 import scala.reflect.ClassTag
 
 /**
+ * InputDStream with GigaSpaces XAP used as external data store.
+ *
+ *
+ * @param ssc streaming context
+ * @param storageLevel RDD persistence level
+ * @param spaceUrl space url
+ * @param template template used to match items when reading from XAP stream
+ * @param batchSize number of items to read from
+ * @param readRetryInterval time to wait till the next read attempt if nothing consumed
+ * @param parallelReaders number of parallel readers
+ * @tparam T Class type of the object of this stream
+ *
  * @author Oleksiy Dyagilev
  */
 class XAPInputDStream[T <: java.io.Serializable : ClassTag](@transient ssc: StreamingContext,

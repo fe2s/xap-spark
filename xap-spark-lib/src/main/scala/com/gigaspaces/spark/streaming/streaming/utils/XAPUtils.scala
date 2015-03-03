@@ -15,6 +15,18 @@ object XAPUtils {
 
   val SPACE_URL_CONF_KEY = "xap.space.url"
 
+  /**
+   * Creates InputDStream with GigaSpaces XAP used as external data store
+   *
+   * @param ssc streaming context
+   * @param storageLevel RDD persistence level
+   * @param template template used to match items when reading from XAP stream
+   * @param batchSize number of items to read from
+   * @param readRetryInterval time to wait till the next read attempt if nothing consumed
+   * @param parallelReaders number of parallel readers
+   * @tparam T Class type of the object of this stream
+   * @return Input DStream
+   */
   def createStream[T <: java.io.Serializable : ClassTag](ssc: StreamingContext, template: T, batchSize:Int, readRetryInterval: Duration = Milliseconds(100), parallelReaders: Int, storageLevel: StorageLevel = MEMORY_AND_DISK_SER) = {
     val spaceUrl = getSpaceUrlFromContext(ssc)
     new XAPInputDStream[T](ssc, storageLevel, spaceUrl, template, batchSize, readRetryInterval, parallelReaders)
