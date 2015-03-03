@@ -30,7 +30,7 @@ object XAPWordCounter extends App {
       opt[String]('m', "spark-master") action {
         (x, c) => c.copy(sparkMaster = x)
       }
-      opt[String]('j', "jar-location") required() action {
+      opt[String]('j', "jar-location") action {
         (x, c) => c.copy(jarLocation = x)
       }
     }
