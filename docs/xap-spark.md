@@ -176,9 +176,11 @@ In this option Spark runs cluster in standalone mode (as alternative to running 
 
 1.	Download Spark (tested with Spark 1.2.1 pre-built with Hadoop 2.4)
 2.	Follow [instructions](http://spark.apache.org/docs/1.2.0/spark-standalone.html) to run master and  2 workers. Here is an example of commands with host name ‘fe2s’
-*	`./sbin/start-master.sh`
-*	`./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077`
-*	`./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077`
+```
+	./sbin/start-master.sh
+	./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077
+	./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077
+```
 3.	Submit application to Spark (in this example driver runs locally)
 *	Navigate to `<project_root>/word-counter-demo/spark/target` directory
 *	Run `java -jar spark-wordcounter.jar -s jini://*/*/space?groups=spark -m spark://fe2s:7077 -j ./spark-wordcounter.jar`
