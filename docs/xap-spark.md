@@ -191,7 +191,7 @@ In this option Spark runs cluster in standalone mode (as alternative to running 
 1.	Submit application to Spark (in this example driver runs locally)
 2.	Navigate to `<project_root>/word-counter-demo/spark/target` directory
 3.	Run `java -jar spark-wordcounter.jar -s jini://*/*/space?groups=spark -m spark://fe2s:7077 -j ./spark-wordcounter.jar`
-4.	Spark web console should be available at http://fe2s:8080
+4.	Spark web console should be available at [http://fe2s:8080](http://fe2s:8080)
 
 ## Launch Feeder application ##
 
@@ -199,4 +199,4 @@ In this option Spark runs cluster in standalone mode (as alternative to running 
 2.	Run `java -jar feeder.jar -g spark -n 500`
 
 
-At this point all components should be up and running. Application is available at http://localhost:8090/web/ 
+At this point all components should be up and running. Application is available at [http://localhost:8090/web/](http://localhost:8090/web/)
