@@ -116,7 +116,7 @@ val wordCountWindow = words
 
 ## Output Spark computation results to XAP ##
 
-Output operations allow `DStream`’s data to be pushed out external systems. Please refer to [Spark documentation](https://spark.apache.org/docs/1.1.0/streaming-programming-guide.html#output-operations-on-dstreams) for details 
+Output operations allow `DStream`’s data to be pushed out to external systems. Please refer to [Spark documentation](https://spark.apache.org/docs/1.1.0/streaming-programming-guide.html#output-operations-on-dstreams) for details
 
 To minimize the cost of creating XAP connection for each `RDD`, we created a connection pool named `GigaSpaceFactory`. Here is an example how to output `RDD` to XAP.
 
