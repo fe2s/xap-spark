@@ -5,7 +5,7 @@
 - [Solution](#)
 	- [XAP Stream](#)
 	- [Spark Input DStream](#)
-- [Output Spark computation results to XAP](#)
+    - [Output Spark computation results to XAP](#)
 - [Word Counter Demo](#)
 	- [High-level design](#)
 	- [Installing and building the Demo application](#)
@@ -114,7 +114,7 @@ val wordCountWindow = words
       .transform(_.sortByKey(ascending = false))
 ```
 
-# Output Spark computation results to XAP #
+## Output Spark computation results to XAP ##
 
 Output operations allow `DStream`’s data to be pushed out external systems. Please refer to [Spark documentation](https://spark.apache.org/docs/1.1.0/streaming-programming-guide.html#output-operations-on-dstreams) for details 
 
