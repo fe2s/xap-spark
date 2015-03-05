@@ -12,11 +12,9 @@ Data can be ingested to Spark cluster from many sources like HDS, Kafka, Flume, 
 
 Spark cluster keeps intermediate chunks of data (RDD) in memory and if required rarely touches HDFS to checkpoint stateful computation, therefore it is able to process huge volumes of data at in-memory speed. However, in many cases the overall performance is limited by slow input and output data sources that are not able to stream and store data with in-memory speed.
 
-In this pattern we address performance challenge by integrating Spark Streaming with XAP. XAP is used as a stream data source and scalable, fast, reliable persistent storage.  
-
-As part of this integration pattern we demonstrate how to build application that consumes live stream of text and displays top 10 five-letter words over a sliding window in real-time.
-
 # Solution #
+
+In this pattern we address performance challenge by integrating Spark Streaming with XAP. XAP is used as a stream data source and scalable, fast, reliable persistent storage.  
 
 ![alt tag](https://github.com/fe2s/xap-spark/blob/master/docs/images/high-level.jpg)
 
@@ -39,9 +37,7 @@ At first we create a data model that represents a sentence. Note, that space cla
 public class Sentence implements Serializable {
     private String id;
     private String text;
-    public Sentence() {
-    }
-[getters setters omitted for brevity]
+    [getters setters omitted for brevity]
 }
 ```
 > Complete sources of Sentence.java can be found [here](https://github.com/fe2s/xap-spark/blob/master/word-counter-demo/space-model/src/main/java/com/gigaspaces/spark/streaming/wordcounter/Sentence.java)
@@ -112,7 +108,7 @@ wordCountWindow.foreachRDD(rdd => {
       val gigaSpace = GigaSpaceFactory.getOrCreate(config.spaceUrl)
       val topList = rdd.take(10).map { case (count, word) => new WordCount(word, count)}
       gigaSpace.write(new TopWordCounts(topList))
-    })
+})
 ```
 
 > Please note that in this example XAP connection created and data written from Spark driver. In some cases one may want to write data from Spark worker. Please refer to Spark documentation, it explains different design patterns using `foreachRDD`.
@@ -125,11 +121,15 @@ As part of this integration pattern we demonstrate how to build application that
 
 ## High-level design ##
 
+The high-level design diagram of Word Counter Demo is below.
+
 ![alt tag](https://github.com/fe2s/xap-spark/blob/master/docs/images/example.jpg)
 
 Feeder is a standalone java application that reads book from text file and writes lines to XAP Stream. 
 
-Stream is consumed by Spark cluster which performs all necessary computing and stores results in XAP space. End user is browsing web page hosted in Web PU that continuously updates dashboard with AJAX requests backed by rest service
+Stream is consumed by Spark cluster which performs all necessary computing and stores results in XAP space. 
+
+End user is browsing web page hosted in Web PU that continuously updates dashboard with AJAX requests backed by rest service
 
 ## Installing and building the Demo application ##
 
