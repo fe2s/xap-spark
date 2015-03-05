@@ -125,10 +125,53 @@ The high-level design diagram of Word Counter Demo is below.
 
 ![alt tag](https://github.com/fe2s/xap-spark/blob/master/docs/images/example.jpg)
 
-1. Feeder is a standalone scala application that reads book from text file and writes lines to XAP Stream. 
+1. Feeder is a standalone scala application that reads book from text file in cycles and writes lines to XAP Stream. 
 2. Stream is consumed by Spark cluster which performs all necessary computing.
 3. Computation results stored in XAP space.
 4. End user is browsing web page hosted in Web PU that continuously updates dashboard with AJAX requests backed by rest service.
 
 ## Installing and building the Demo application ##
 
+1.	Download [XAP](http://www.gigaspaces.com/LatestProductVersion)
+2.	[Install XAP](http://docs.gigaspaces.com/xap100/installation.html)
+3.	Install Maven and the XAP Maven plug-in
+4.	Download the application [source code](https://github.com/fe2s/xap-spark)
+5.	Build the project by running `mvn clean install`
+
+## Deploying XAP Space and Web PU ##
+
+1.	Set XAP lookup group to ‘spark’ by adding `export LOOKUPGROUPS=spark` line to `<XAP_HOME>/bin/setenv.sh/bat`
+2.	Start a Grid Service Agent by running the `gs-agent.sh/bat` script
+3.	Deploy space by running `mvn os:deploy -Dgroups=spark` from `<project_root>/word-counter-demo` directory
+
+## Launch Spark Application ##
+
+### Option A. Run embedded Spark cluster ###
+
+This is the simplest option that doesn’t require downloading and installing Spark distributive. Useful for development purpose. Spark runs in embedded mode with as many worker threads as logical cores on your machine. 
+
+1.	Navigate to `<project_root>/word-counter-demo/spark/target` directory
+2.	Run the following command `java -jar spark-wordcounter.jar -s jini://*/*/space?groups=spark -m local[*]`
+ 
+### Option B. Run Spark standalone mode cluster ###
+
+In this option Spark runs cluster in standalone mode (as alternative to running on Mesos or YARN cluster managers).  
+
+1.	Download Spark (tested with Spark 1.2.1 pre-built with Hadoop 2.4)
+2.	Follow instructions to run master and  2 workers http://spark.apache.org/docs/1.2.0/spark-standalone.html
+Here is an example of commands with host name ‘fe2s’
+*	`./sbin/start-master.sh`
+*	`./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077`
+*	`./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077`
+3.	Submit application to Spark (in this example driver runs locally)
+*	Navigate to `<project_root>/word-counter-demo/spark/target` directory
+*	Run `java -jar spark-wordcounter.jar -s jini://*/*/space?groups=spark -m spark://fe2s:7077 -j ./spark-wordcounter.jar`
+*	Spark web console should be available at http://fe2s:8080
+
+## Launch Feeder application ##
+
+1.	Navigate to `<project_root>/word-counter-demo/feeder/target`
+2.	Run `java -jar feeder.jar -g spark -n 500`
+
+
+At this point all components should be up and running. Application is available at http://localhost:8090/web/ 
