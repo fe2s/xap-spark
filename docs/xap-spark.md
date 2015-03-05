@@ -44,7 +44,7 @@ public class Sentence implements Serializable {
 [getters setters omitted for brevity]
 }
 ```
-> Complete sources of Sentence.java can be found [here](https://github.com/fe2s/xap-spark/blob/master/word-counter-demo/feeder/src/main/scala/com/gigaspaces/spark/streaming/wordcounter/Feeder.scala)
+> Complete sources of Sentence.java can be found [here](https://github.com/fe2s/xap-spark/blob/master/word-counter-demo/space-model/src/main/java/com/gigaspaces/spark/streaming/wordcounter/Sentence.java)
 
 ## Spark Input DStream ##
 
@@ -70,7 +70,7 @@ In order to ingest data from XAP to Spark, we implemented custom `ReceiverInputD
   def createStream[T <: java.io.Serializable : ClassTag](ssc: StreamingContext, template: T, batchSize:Int, readRetryInterval: Duration = Milliseconds(100), parallelReaders: Int, storageLevel: StorageLevel = MEMORY_AND_DISK_SER){…} 
 ```
 
-Here is an example of creating XAP Input stream. At first we set XAP space url to Spark config:
+Here is an example of creating XAP Input stream. At first we set XAP space url in Spark config:
 
 ```scala
   val sparkConf = new SparkConf()
@@ -84,7 +84,7 @@ And then we create a stream by merging two parallel sub-streams:
 
 ```scala
 val numStreams = 2
-val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context, new Sentence(), 50, Milliseconds(100), 4))
+val streams = (1 to numStreams).map(_ => XAPUtils.createStream(context, new Sentence(), 50, Milliseconds(100), 4))
 val stream = context.union(streams)
 ```
 

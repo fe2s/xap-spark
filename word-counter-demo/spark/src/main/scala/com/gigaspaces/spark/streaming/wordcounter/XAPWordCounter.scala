@@ -55,7 +55,7 @@ object XAPWordCounter extends App {
 
     // create XAP stream by merging parallel sub-streams
     val numStreams = 2
-    val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context, new Sentence(), 50, Milliseconds(100), 4))
+    val streams = (1 to numStreams).map(_ => XAPUtils.createStream(context, new Sentence(), 50, Milliseconds(100), 4))
     val stream = context.union(streams)
 
     // computation
