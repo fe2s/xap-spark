@@ -97,7 +97,7 @@ val wordCountWindow = words
       .transform(_.sortByKey(ascending = false))
 ```
 
-Output Spark computation results to XAP
+# Output Spark computation results to XAP #
 
 Output operations allow `DStream`’s data to be pushed out external systems. Please refer to [Spark documentation](https://spark.apache.org/docs/1.1.0/streaming-programming-guide.html#output-operations-on-dstreams) for details 
 
@@ -115,7 +115,7 @@ wordCountWindow.foreachRDD(rdd => {
 
 # Word Counter Demo #
  
-As part of this integration pattern we demonstrate how to build application that consumes live stream of text and displays top 10 five-letter words over a sliding window in real-time.
+As part of this integration pattern we demonstrate how to build application that consumes live stream of text and displays top 10 five-letter words over a sliding window in real-time. The user interface consists of a simple single page web application displaying a table of top 10 words and a word cloud. The data on UI is updated every second.  
 
 ![alt tag](https://github.com/fe2s/xap-spark/blob/master/docs/images/spark-word-counter.jpg)
 
@@ -125,11 +125,10 @@ The high-level design diagram of Word Counter Demo is below.
 
 ![alt tag](https://github.com/fe2s/xap-spark/blob/master/docs/images/example.jpg)
 
-Feeder is a standalone java application that reads book from text file and writes lines to XAP Stream. 
-
-Stream is consumed by Spark cluster which performs all necessary computing and stores results in XAP space. 
-
-End user is browsing web page hosted in Web PU that continuously updates dashboard with AJAX requests backed by rest service
+1. Feeder is a standalone scala application that reads book from text file and writes lines to XAP Stream. 
+2. Stream is consumed by Spark cluster which performs all necessary computing.
+3. Computation results stored in XAP space.
+4. End user is browsing web page hosted in Web PU that continuously updates dashboard with AJAX requests backed by rest service.
 
 ## Installing and building the Demo application ##
 
