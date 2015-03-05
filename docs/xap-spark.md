@@ -88,7 +88,7 @@ val streams = (1 to numStreams).map(_ => XAPUtils.createStream[Sentence](context
 val stream = context.union(streams)
 ```
 
-Once stream created, once can apply any Spark functions like `map`, `filter`, `reduce`, `transform`, etc.
+Once stream created, we can apply any Spark functions like `map`, `filter`, `reduce`, `transform`, etc.
 
 For instance to compute word counter of five-letter words over a sliding window, one can do the following
 
@@ -115,7 +115,7 @@ wordCountWindow.foreachRDD(rdd => {
     })
 ```
 
-Please note that in this example XAP connection created and data written from Spark driver. In some cases one may want to write data from Spark worker. Please refer to Spark documentation, it explains different design patterns using `foreachRDD`.
+> Please note that in this example XAP connection created and data written from Spark driver. In some cases one may want to write data from Spark worker. Please refer to Spark documentation, it explains different design patterns using `foreachRDD`.
 
 # Word Counter Demo #
  
@@ -125,7 +125,7 @@ As part of this integration pattern we demonstrate how to build application that
 
 ## High-level design ##
 
-![alt tag](https://github.com/fe2s/xap-spark/blob/master/docs/images/high-level.jpg)
+![alt tag](https://github.com/fe2s/xap-spark/blob/master/docs/images/example.jpg)
 
 Feeder is a standalone java application that reads book from text file and writes lines to XAP Stream. 
 
