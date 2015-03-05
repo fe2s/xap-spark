@@ -179,7 +179,7 @@ In this option Spark runs cluster in standalone mode (as alternative to running 
 #### Run Spark ###
 
 1.	Download Spark (tested with Spark 1.2.1 pre-built with Hadoop 2.4)
-2.	Follow [instructions](http://spark.apache.org/docs/1.2.0/spark-standalone.html) to run master and  2 workers. Here is an example of commands with host name ‘fe2s’
+2.	Follow [instructions](http://spark.apache.org/docs/1.2.0/spark-standalone.html) to run master and  2 workers. Here is an example of commands with hostname ‘fe2s’ (remember to substitute it with yours)
 ```
 	./sbin/start-master.sh
 	./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077
