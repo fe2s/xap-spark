@@ -1,3 +1,22 @@
+**Table of Contents**
+
+- [Introduction](#)
+- [Challenge](#)
+- [Solution](#)
+	- [XAP Stream](#)
+	- [Spark Input DStream](#)
+	- [Output Spark computation results to XAP](#)
+- [Word Counter Demo](#)
+	- [High-level design](#)
+	- [Installing and building the Demo application](#)
+	- [Deploying XAP Space and Web PU](#)
+	- [Launch Spark Application](#)
+		- [Option A. Run embedded Spark cluster](#)
+		- [Option B. Run Spark standalone mode cluster](#)
+			- [Run Spark](#)
+			- [Submit application](#)
+	- [Launch Feeder application](#)
+
 # Introduction #
 
 Real-time processing is becoming more and more popular. [Spark Streaming](https://spark.apache.org/streaming/) is an extension of the core Spark API that allows scalable, high-throughput, fault-tolerant stream processing of live data streams.
