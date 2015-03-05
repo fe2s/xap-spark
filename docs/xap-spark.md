@@ -1,3 +1,20 @@
+**Table of Contents**
+
+- [Introduction](#)
+- [Challenge](#)
+- [Solution](#)
+	- [XAP Stream](#)
+	- [Spark Input DStream](#)
+- [Output Spark computation results to XAP](#)
+- [Word Counter Demo](#)
+	- [High-level design](#)
+	- [Installing and building the Demo application](#)
+	- [Deploying XAP Space and Web PU](#)
+	- [Launch Spark Application](#)
+		- [Option A. Run embedded Spark cluster](#)
+		- [Option B. Run Spark standalone mode cluster](#)
+	- [Launch Feeder application](#)
+
 # Introduction #
 
 Real-time processing is becoming more and more popular. [Spark Streaming](https://spark.apache.org/streaming/) is an extension of the core Spark API that allows scalable, high-throughput, fault-tolerant stream processing of live data streams.
@@ -158,8 +175,7 @@ This is the simplest option that doesn’t require downloading and installing Sp
 In this option Spark runs cluster in standalone mode (as alternative to running on Mesos or YARN cluster managers).  
 
 1.	Download Spark (tested with Spark 1.2.1 pre-built with Hadoop 2.4)
-2.	Follow instructions to run master and  2 workers http://spark.apache.org/docs/1.2.0/spark-standalone.html
-Here is an example of commands with host name ‘fe2s’
+2.	Follow [instructions](http://spark.apache.org/docs/1.2.0/spark-standalone.html) to run master and  2 workers. Here is an example of commands with host name ‘fe2s’
 *	`./sbin/start-master.sh`
 *	`./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077`
 *	`./bin/spark-class org.apache.spark.deploy.worker.Worker spark://fe2s:7077`
